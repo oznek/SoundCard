@@ -206,7 +206,7 @@ class _Speaker(_SoundCard):
     def __repr__(self):
         return '<Speaker {} ({} channels)>'.format(self.name, self.channels)
 
-    def player(self, samplerate, channels=None, blocksize=None):
+    def player(self, samplerate, channels=None, blocksize=None, medianame='outputstream'):
         """Create Player for playing audio.
 
         Parameters
@@ -222,6 +222,8 @@ class _Speaker(_SoundCard):
         blocksize : int
             Will play this many samples at a time. Choose a lower
             block size for lower latency and more CPU usage.
+        medianame : str
+            Associates a media name to PulseAudio stream.
 
         Returns
         -------
@@ -229,9 +231,9 @@ class _Speaker(_SoundCard):
         """
         if channels is None:
             channels = self.channels
-        return _Player(self._id, samplerate, channels, blocksize)
+        return _Player(self._id, samplerate, channels, blocksize, medianame)
 
-    def play(self, data, samplerate, channels=None, blocksize=None):
+    def play(self, data, samplerate, channels=None, blocksize=None, medianame='outputstream'):
         """Play some audio data.
 
         Parameters
@@ -249,10 +251,12 @@ class _Speaker(_SoundCard):
         blocksize : int
             Will play this many samples at a time. Choose a lower
             block size for lower latency and more CPU usage.
+        medianame : str
+            Associates a media name to PulseAudio stream.
         """
         if channels is None:
             channels = self.channels
-        with _Player(self._id, samplerate, channels, blocksize) as s:
+        with _Player(self._id, samplerate, channels, blocksize, medianame) as s:
             s.play(data)
 
     def _get_info(self):
